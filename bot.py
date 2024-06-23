@@ -4,13 +4,15 @@ import json
 from datetime import datetime, timedelta
 import pytz
 
-# Hier den tatsächlichen Token deines Discord-Bots einfügen
-TOKEN = 'MTI0NzI3ODAwMjg3OTA3NDM3Ng.Gvj2zD.n9j8oOmejwCNe9dT1b4_qbPX3mkztUXlw-oR2E'
+# NOT´E THAT IN ORDER FOR THIS TO WORK YOU HAVE TO BE IN THE SAME SERVER AS THE BOT!
 
-# Hier die tatsächliche Benutzer-ID einfügen, die benachrichtigt werden soll
-USER_ID = 747927665729732708
+# Replace TOKEN with the discord token
+TOKEN = 'TOKEN'
 
-# Zeitzone Berlin
+# Replace UID WITH YOUR UID
+USER_ID = UID
+
+# Tbh idk about this ask chatgpt how to set your timezone here mine was europe berlin
 berlin_tz = pytz.timezone('Europe/Berlin')
 
 intents = discord.Intents.default()
@@ -23,15 +25,13 @@ def load_schedule():
     try:
         with open(SCHEDULE_FILE, 'r') as f:
             schedule = json.load(f)
-        # Konvertiere Zeit-Strings zurück zu datetime-Objekten mit Zeitzone
         for entry in schedule:
             entry['datetime'] = berlin_tz.localize(datetime.strptime(entry['datetime'], '%Y-%m-%d %H:%M'))
         return schedule
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error loading schedule: {e}")  # Debug-Ausgabe
+        print(f"Error loading schedule: {e}")
         return []
 
-# Funktion zur Planung der Erinnerungen
 async def schedule_reminders(schedule, user):
     for entry in schedule:
         event_time = entry['datetime']
@@ -39,21 +39,22 @@ async def schedule_reminders(schedule, user):
         reminder_time = event_time - timedelta(minutes=15)
         if now < reminder_time:
             wait_time = (reminder_time - now).total_seconds()
-            print(f"Scheduling reminder for {event_time.strftime('%H:%M')} on {event_time.strftime('%d.%m.%Y')}, waiting {wait_time} seconds.")  # Debug-Ausgabe
+            print(f"Scheduling reminder for {event_time.strftime('%H:%M')} on {event_time.strftime('%d.%m.%Y')}, waiting {wait_time} seconds.")
             await asyncio.sleep(wait_time)
-            await user.send(f"Erinnerung: Du hast in 15 Minuten eine SkyBad schicht um {event_time.strftime('%H:%M')} am {event_time.strftime('%d.%m.%Y')}.")
+            # replace REMINDER_TEXT and REMINDER_TEXT2 with your text
+            await user.send(f" REMINDER_TEXT {event_time.strftime('%H:%M')} REMINDER_TEXT2 {event_time.strftime('%d.%m.%Y')}.")
         else:
-            print(f"Reminder time for {event_time.strftime('%H:%M')} on {event_time.strftime('%d.%m.%Y')} has already passed.")  # Debug-Ausgabe
+            print(f"Reminder time for {event_time.strftime('%H:%M')} on {event_time.strftime('%d.%m.%Y')} has already passed.")
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user} eingeloggt')
+    print(f'Logged in as {client.user}')
     schedule = load_schedule()
-    print(f"Loaded schedule: {schedule}")  # Debug-Ausgabe
+    print(f"Loaded schedule: {schedule}") 
     if schedule:
         user = await client.fetch_user(USER_ID)
         await schedule_reminders(schedule, user)
     else:
-        print("Kein Zeitplan gefunden. Warte auf Eingabe...")
+        print("No schedule found please set it in the schedule.json file!")
 
 client.run(TOKEN)
