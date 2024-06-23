@@ -17,7 +17,11 @@ pip install discord.py
 pip install pytz
 ```
 
-# Requirements
+## Requirements
 - Basic knowladge of computers (Apparently this is difficult for many)
 - [Python](https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe)
 - a discord account
+
+#### You can run the bot on a cheap server ( I recommend [24fire](https://24fi.re/ref/8BI28ZDJ) )
+
+(thanks to chatgpt for basically creating 90% of the bot)
